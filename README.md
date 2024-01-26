@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+### Aviasales on React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Условия
 
-## Available Scripts
+- Использован React
+- Использован JS и JSX
+- Работоспособность в актуальной версии Google Chrome
 
-In the project directory, you can run:
+# Описание взаимодействия с сервером
 
-### `npm start`
+Схема работы проста: сначала необходимо инициировать поиск на сервере и получить идентификатор поиска (`searchId`). Далее, с полученным `searchId`, ты делаешь запросы для получения неотсортированных списков билетов. Обрати внимание, что билеты прилетают пачками, которые необходимо агрегировать, фильтровать и сортировать согласно выбранным в интерфейсе параметрам. Для усложнения задачи, сервер может на один из запросов ответить ошибкой.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Получение `searchId`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Просто отправь GET-запрос на `https://front-test.dev.aviasales.ru/search` и получи его.
 
-### `npm test`
+Пример:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Request: `https://front-test.dev.aviasales.ru/search`
 
-### `npm run build`
+Response: `{"searchId":"4niyd"}`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Получение пачки билетов
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Отправляй GET-запросы на `https://front-test.dev.aviasales.ru/tickets` и передай searchId полученный из запроса выше GET-параметром.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Пример:
 
-### `npm run eject`
+Request: `https://front-test.dev.aviasales.ru/tickets?searchId=4niyd`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Response: `{tickets: [], stop: false}`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Обработка завершения поиска
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Поиск считается завершенным, когда в очередном ответе от сервера придёт значение `{stop: true}`.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Пример:
 
-## Learn More
+Request: `https://front-test.dev.aviasales.ru/tickets?searchId=4niyd`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Response: `{tickets: [], stop: true}`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Структура билета
 
-### Code Splitting
+В списке `tickets` будут лежать билеты следующей структуры:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```typescript
+interface Ticket {
+  // Цена в рублях
+  price: number
+  // Код авиакомпании (iata)
+  carrier: string
+  // Массив перелётов.
+  // В тестовом задании это всегда поиск "туда-обратно" значит состоит из двух элементов
+  segments: [
+    {
+      // Код города (iata)
+      origin: string
+      // Код города (iata)
+      destination: string
+      // Дата и время вылета туда
+      date: string
+      // Массив кодов (iata) городов с пересадками
+      stops: string[]
+      // Общее время перелёта в минутах
+      duration: number
+    },
+    {
+      // Код города (iata)
+      origin: string
+      // Код города (iata)
+      destination: string
+      // Дата и время вылета обратно
+      date: string
+      // Массив кодов (iata) городов с пересадками
+      stops: string[]
+      // Общее время перелёта в минутах
+      duration: number
+    }
+  ]
+}
+```

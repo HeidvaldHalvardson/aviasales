@@ -1,0 +1,7 @@
+.wrapper {
+  width: 100%;
+
+  @media (min-width: 740px) {
+    width: 502px;
+  }
+}
