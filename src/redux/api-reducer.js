@@ -1,5 +1,6 @@
 const initialState = {
   tickets: [],
+  error: false,
 }
 
 const apiReducer = (state = initialState, action) => {
@@ -8,6 +9,11 @@ const apiReducer = (state = initialState, action) => {
       return {
         ...state,
         tickets: action.payload,
+      }
+    case 'error':
+      return {
+        ...state,
+        error: action.payload,
       }
     default:
       return state
