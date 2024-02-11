@@ -1,26 +1,34 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import * as actions from '../../actions/sortActions'
+import { sortingAC } from '../../actions/sortActions'
 
 import styles from './Tabs.module.scss'
 
-const Tabs = ({ sortValue, cheapestAC, fastestAC, optimalAC }) => {
+const Tabs = ({ sortValue, sortingAC }) => {
+  const sortingValues = [
+    { value: 'cheapest', text: 'Самый дешевый' },
+    { value: 'fastest', text: 'Самый быстрый' },
+    { value: 'optimal', text: 'Оптимальный' },
+  ]
+
   return (
     <div className={styles.wrapper}>
-      <div className={`${styles.tab} ${sortValue === 'cheapest' ? styles['tab-current'] : ''}`} onClick={cheapestAC}>
-        <span>Самый дешевый</span>
-      </div>
-      <div className={`${styles.tab} ${sortValue === 'fastest' ? styles['tab-current'] : ''}`} onClick={fastestAC}>
-        <span>Самый быстрый</span>
-      </div>
-      <div className={`${styles.tab} ${sortValue === 'optimal' ? styles['tab-current'] : ''}`} onClick={optimalAC}>
-        <span>Оптимальный</span>
-      </div>
+      {sortingValues.map((item, id) => {
+        return (
+          <div
+            key={id}
+            className={`${styles.tab} ${sortValue === item.value ? styles['tab-current'] : ''}`}
+            onClick={() => sortingAC(item.value)}
+          >
+            <span>{item.text}</span>
+          </div>
+        )
+      })}
     </div>
   )
 }
 
 const mapStateToProps = (state) => ({ sortValue: state.sortReducer })
 
-export default connect(mapStateToProps, actions)(Tabs)
+export default connect(mapStateToProps, { sortingAC })(Tabs)
