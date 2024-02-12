@@ -1,29 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 
-import { getTickets } from '../../api/api'
-import { getTicketsAC, toggleErrorAC } from '../../actions/apiActions'
 import ShowMore from '../ShowMore/ShowMore'
 import Spinner from '../../UI/Spinner/Spinner'
+import { getTicketsTC } from '../../actions/apiActions'
 
 import Ticket from './Ticket/Ticket'
 import styles from './Tickets.module.scss'
 
-const Tickets = ({ tickets, sort, filter, error, getTicketsAC, toggleErrorAC }) => {
+const Tickets = ({ tickets, sort, filter, error, isLoading, getTicketsTC }) => {
   const [count, setCount] = useState(5)
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    getTickets()
-      .then((res) => {
-        toggleErrorAC(false)
-        getTicketsAC(res.tickets)
-        setIsLoading(false)
-      })
-      .catch(() => {
-        toggleErrorAC(true)
-        setIsLoading(false)
-      })
+    getTicketsTC()
   }, [])
 
   const filterTicketsList = (list, filterValue) => {
@@ -97,7 +86,8 @@ const mapStateToProps = (state) => {
     sort: state.sortReducer,
     filter: state.filterReducer,
     error: state.apiReducer.error,
+    isLoading: state.apiReducer.isLoading,
   }
 }
 
-export default connect(mapStateToProps, { getTicketsAC, toggleErrorAC })(Tickets)
+export default connect(mapStateToProps, { getTicketsTC })(Tickets)
