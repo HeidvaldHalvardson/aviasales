@@ -5,21 +5,15 @@ import { sortingAC } from '../../actions/sortActions'
 
 import styles from './Tabs.module.scss'
 
-const Tabs = ({ sortValue, sortingAC }) => {
-  const sortingValues = [
-    { value: 'cheapest', text: 'Самый дешевый' },
-    { value: 'fastest', text: 'Самый быстрый' },
-    { value: 'optimal', text: 'Оптимальный' },
-  ]
-
+const Tabs = ({ sortValues, sortingAC }) => {
   return (
     <div className={styles.wrapper}>
-      {sortingValues.map((item, id) => {
+      {sortValues.map((item, id) => {
         return (
           <div
             key={id}
-            className={`${styles.tab} ${sortValue === item.value ? styles['tab-current'] : ''}`}
-            onClick={() => sortingAC(item.value)}
+            className={`${styles.tab} ${item.checked ? styles['tab-current'] : ''}`}
+            onClick={item.checked ? () => {} : () => sortingAC('sort', item.value)}
           >
             <span>{item.text}</span>
           </div>
@@ -29,6 +23,6 @@ const Tabs = ({ sortValue, sortingAC }) => {
   )
 }
 
-const mapStateToProps = (state) => ({ sortValue: state.sortReducer })
+const mapStateToProps = (state) => ({ sortValues: state.sortReducer })
 
 export default connect(mapStateToProps, { sortingAC })(Tabs)

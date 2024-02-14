@@ -6,50 +6,29 @@ import * as actions from '../actions/filterActions'
 
 import styles from './Form.module.scss'
 
-const Form = ({ checkboxList, onChangedFilterAC }) => {
-  const toggleFilterAll = (checked) => {
-    const newFilter = checkboxList.map((item) => {
-      item.checked = checked
-      return item
-    })
-    onChangedFilterAC(newFilter)
-  }
-
+const Form = ({ checkboxList, filterAC, filterAllAC }) => {
   const toggleFilter = (checked, value) => {
-    const newAll = { ...checkboxList[0] }
-    const allPoints = checkboxList.slice(1)
-    if (newAll.checked && !checked) {
-      newAll.checked = false
-    } else if (allPoints.filter((item) => item.checked).length === 3 && !newAll.checked && checked) {
-      newAll.checked = true
-    }
+    const all = { ...checkboxList[0] }
+    const points = checkboxList.slice(1)
 
-    const newFilter = allPoints.map((item) => {
-      if (item.value === value) {
-        item.checked = checked
-        return item
+    if (value === 'all') {
+      filterAllAC(checked)
+    } else {
+      if (all.checked && !checked) {
+        filterAC('all')
+      } else if (points.filter((item) => item.checked).length === 3 && !all.checked && checked) {
+        filterAC('all')
       }
-      return item
-    })
-
-    onChangedFilterAC([newAll, ...newFilter])
+      filterAC(value)
+    }
   }
-
   return (
     <form className={styles.form}>
       <fieldset className={styles.fieldset}>
         <legend>Количество пересадок</legend>
         <div className={styles.wrapper}>
           {checkboxList.map(({ label, value, checked }, id) => {
-            return (
-              <Checkbox
-                key={id}
-                value={value}
-                label={label}
-                checked={checked}
-                toggleFilter={value === 'all' ? toggleFilterAll : toggleFilter}
-              />
-            )
+            return <Checkbox key={id} value={value} label={label} checked={checked} toggleFilter={toggleFilter} />
           })}
         </div>
       </fieldset>

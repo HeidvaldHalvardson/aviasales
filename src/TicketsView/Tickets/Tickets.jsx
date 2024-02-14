@@ -10,10 +10,11 @@ import styles from './Tickets.module.scss'
 
 const Tickets = ({ tickets, sort, filter, error, isLoading, getTicketsTC }) => {
   const [count, setCount] = useState(5)
-
   useEffect(() => {
     getTicketsTC()
   }, [])
+
+  const sortingValue = sort.filter((el) => el.checked)[0].value
 
   const filterTicketsList = (list, filterValue) => {
     let filteredList = []
@@ -37,7 +38,7 @@ const Tickets = ({ tickets, sort, filter, error, isLoading, getTicketsTC }) => {
       return [...list].sort((a, b) => a.segments[0].stops.length - b.segments[0].stops.length)
   }
 
-  const ticketsList = sortingTicketsList(filterTicketsList(tickets, filter), sort).slice(0, count)
+  const ticketsList = sortingTicketsList(filterTicketsList(tickets, filter), sortingValue).slice(0, count)
 
   const onClick = () => {
     setCount((count) => {

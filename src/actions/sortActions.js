@@ -1,1 +1,1 @@
-export const sortingAC = (type) => ({ type })
+export const sortingAC = (type, payload) => ({ type, payload })

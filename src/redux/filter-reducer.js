@@ -8,8 +8,10 @@ const initialState = [
 
 const filterReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'changed':
-      return [...action.payload]
+    case 'all':
+      return state.map((el) => (el.checked !== action.checked ? { ...el, checked: !el.checked } : { ...el }))
+    case 'filter':
+      return state.map((el) => (el.value === action.value ? { ...el, checked: !el.checked } : { ...el }))
     default:
       return state
   }

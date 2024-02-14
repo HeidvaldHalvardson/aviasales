@@ -13,6 +13,6 @@ export const getTicketsTC = () => (dispatch) => {
     })
     .catch(() => {
       dispatch(toggleErrorAC(true))
-      dispatch(toggleErrorAC(false))
+      dispatch(toggleLoadingAC(false))
     })
 }
